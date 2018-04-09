@@ -67,7 +67,7 @@ public final class Retrofit {
     final HttpUrl baseUrl;
     //数据解析器工厂集合，例如：GsonConverterFactor
     final List<Converter.Factory> converterFactories;
-    //数据适配器工厂集合，例如：﻿RxJavaCallAdapterFactor
+    //数据适配器工厂集合，例如：RxJavaCallAdapterFactor
     final List<CallAdapter.Factory> callAdapterFactories;
 
     //回调的线程池
@@ -231,7 +231,7 @@ public final class Retrofit {
     /**
      * Returns the {@link CallAdapter} for {@code returnType} from the available {@linkplain
      * #callAdapterFactories() factories} except {@code skipPast}.
-     *
+     * @param returnType 调用的方法的返回值的Type
      * @throws IllegalArgumentException if no call adapter available for {@code type}.
      */
     public CallAdapter<?, ?> nextCallAdapter(@Nullable CallAdapter.Factory skipPast, Type returnType,
@@ -241,7 +241,8 @@ public final class Retrofit {
 
         int start = callAdapterFactories.indexOf(skipPast) + 1;
         for (int i = start, count = callAdapterFactories.size(); i < count; i++) {
-            CallAdapter<?, ?> adapter = callAdapterFactories.get(i).get(returnType, annotations, this);
+            CallAdapter<?, ?> adapter = callAdapterFactories.get(i)
+                    .get(returnType, annotations, this);
             if (adapter != null) {
                 return adapter;
             }
