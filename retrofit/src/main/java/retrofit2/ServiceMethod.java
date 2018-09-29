@@ -103,7 +103,7 @@ final class ServiceMethod<R, T> {
                 contentType, hasBody, isFormEncoded, isMultipart);
 
         @SuppressWarnings("unchecked") // It is an error to invoke a method with the wrong arg types.
-                ParameterHandler<Object>[] handlers = (ParameterHandler<Object>[]) parameterHandlers;
+        ParameterHandler<Object>[] handlers = (ParameterHandler<Object>[]) parameterHandlers;
 
         int argumentCount = args != null ? args.length : 0;
         if (argumentCount != handlers.length) {

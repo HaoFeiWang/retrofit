@@ -35,8 +35,8 @@ public interface CallAdapter<R, T> {
     /**
      * 这里的R其实就是{@link #responseType}返回的类型，T就是对R类型进行了CallAdapter处理后的类型
      * 例如使用RxJavaCallAdapter时，假设响应的Entry是Person，那么R就是Person，没有经过RxJavaCallAdapter处理的
-     * 接口返回就是Response<Person>,经过RxJavaCallAdapter处理的接口返回就是Observable<Person>，而这个
-     * Observable<Person>就是T
+     * 接口返回就是Response<Person>,经过RxJavaCallAdapter处理的接口返回就是Observable<Person>
+     * 而这个Observable<Person>就是T
      */
     T adapt(Call<R> call);
 
@@ -50,8 +50,7 @@ public interface CallAdapter<R, T> {
          * cannot be handled by this factory.
          */
         public abstract @Nullable
-        CallAdapter<?, ?> get(Type returnType, Annotation[] annotations,
-                              Retrofit retrofit);
+        CallAdapter<?, ?> get(Type returnType, Annotation[] annotations, Retrofit retrofit);
 
         /**
          * Extract the upper bound of the generic parameter at {@code index} from {@code type}. For

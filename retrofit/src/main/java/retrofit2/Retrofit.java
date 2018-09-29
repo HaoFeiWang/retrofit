@@ -59,7 +59,7 @@ import static retrofit2.Utils.checkNotNull;
  * @author Jake Wharton (jw@squareup.com)
  */
 public final class Retrofit {
-    //线程安全的HashMap
+    //线程安全的HashMap，通过锁分段技术提高了性能（相对于synchronized）
     private final Map<Method, ServiceMethod<?, ?>> serviceMethodCache = new ConcurrentHashMap<>();
     //OkHttpClient
     final okhttp3.Call.Factory callFactory;
@@ -157,10 +157,13 @@ public final class Retrofit {
                             return platform.invokeDefaultMethod(method, service, proxy, args);
                         }
 
-                        //核心
-                        ServiceMethod<Object, Object> serviceMethod =
-                                (ServiceMethod<Object, Object>) loadServiceMethod(method);
+                        //核心步骤一：创建ServiceMethod
+                        ServiceMethod<Object, Object> serviceMethod = (ServiceMethod<Object, Object>) loadServiceMethod(method);
+
+                        //核心步骤二：创建OkHttpCall
                         OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
+
+                        //核心步骤三：执行操作
                         return serviceMethod.adapt(okHttpCall);
                     }
                 });
@@ -185,6 +188,9 @@ public final class Retrofit {
         ServiceMethod<?, ?> result = serviceMethodCache.get(method);
         if (result != null) return result;
 
+        //为什么需要加锁？ConcurrentHashMap只能保证单个操作是线程安全的
+        //而如下的操作相当于先获取一个该Method所对应的ServiceMethod的单例
+        //然后将这个单例加入到ConcurrentHashMap，如果不加锁则会put两个
         synchronized (serviceMethodCache) {
             result = serviceMethodCache.get(method);
             if (result == null) {
@@ -192,6 +198,7 @@ public final class Retrofit {
                 serviceMethodCache.put(method, result);
             }
         }
+
         return result;
     }
 
