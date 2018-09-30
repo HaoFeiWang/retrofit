@@ -53,6 +53,8 @@ final class ExecutorCallAdapterFactory extends CallAdapter.Factory {
         };
     }
 
+
+    //静态代理模式
     static final class ExecutorCallbackCall<T> implements Call<T> {
         final Executor callbackExecutor;
         final Call<T> delegate;

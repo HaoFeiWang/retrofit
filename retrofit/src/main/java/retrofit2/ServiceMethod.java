@@ -103,7 +103,7 @@ final class ServiceMethod<R, T> {
                 contentType, hasBody, isFormEncoded, isMultipart);
 
         @SuppressWarnings("unchecked") // It is an error to invoke a method with the wrong arg types.
-        ParameterHandler<Object>[] handlers = (ParameterHandler<Object>[]) parameterHandlers;
+                ParameterHandler<Object>[] handlers = (ParameterHandler<Object>[]) parameterHandlers;
 
         int argumentCount = args != null ? args.length : 0;
         if (argumentCount != handlers.length) {
@@ -138,12 +138,13 @@ final class ServiceMethod<R, T> {
         final Retrofit retrofit;
         //请求方法
         final Method method;
+        //请求方法的参数类型
+        final Type[] parameterTypes;
         //请求方法的注解
         final Annotation[] methodAnnotations;
         //请求方法中注解的内容
         final Annotation[][] parameterAnnotationsArray;
-        //请求方法的参数类型
-        final Type[] parameterTypes;
+
 
         Type responseType;
         boolean gotField;
@@ -168,18 +169,17 @@ final class ServiceMethod<R, T> {
             this.retrofit = retrofit;
             this.method = method;
 
-            this.methodAnnotations = method.getAnnotations();
             this.parameterTypes = method.getGenericParameterTypes();
+            this.methodAnnotations = method.getAnnotations();
             this.parameterAnnotationsArray = method.getParameterAnnotations();
         }
 
         public ServiceMethod build() {
             callAdapter = createCallAdapter();
             responseType = callAdapter.responseType();
+
             if (responseType == Response.class || responseType == okhttp3.Response.class) {
-                throw methodError("'"
-                        + Utils.getRawType(responseType).getName()
-                        + "' is not a valid response body type. Did you mean ResponseBody?");
+                throw methodError("'" + Utils.getRawType(responseType).getName() + "' is not a valid response body type. Did you mean ResponseBody?");
             }
             responseConverter = createResponseConverter();
 
@@ -242,8 +242,7 @@ final class ServiceMethod<R, T> {
             //获取该方法的返回值类型
             Type returnType = method.getGenericReturnType();
             if (Utils.hasUnresolvableType(returnType)) {
-                throw methodError(
-                        "Method return type must not include a type variable or wildcard: %s", returnType);
+                throw methodError("Method return type must not include a type variable or wildcard: %s", returnType);
             }
             if (returnType == void.class) {
                 throw methodError("Service methods cannot return void.");

@@ -36,6 +36,7 @@ final class CallExecuteObservable<T> extends Observable<Response<T>> {
         // Since Call is a one-shot type, clone it for each new observer.
         Call<T> call = originalCall.clone();
         CallDisposable disposable = new CallDisposable(call);
+
         observer.onSubscribe(disposable);
 
         boolean terminated = false;
